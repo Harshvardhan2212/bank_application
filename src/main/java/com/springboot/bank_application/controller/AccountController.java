@@ -1,6 +1,7 @@
 package com.springboot.bank_application.controller;
 
 import com.springboot.bank_application.dto.AccountDto;
+import com.springboot.bank_application.dto.TransactionDto;
 import com.springboot.bank_application.dto.TransferFundDto;
 import com.springboot.bank_application.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +70,11 @@ public class AccountController {
     public ResponseEntity<Map<String, String>> transferFund(@RequestBody TransferFundDto transferFundDto) {
         accountService.transferFund(transferFundDto);
         return ResponseEntity.ok(Map.of("message", "Transfer successful"));
+    }
+
+    @GetMapping("/{accountId}/transaction")
+    public ResponseEntity<List<TransactionDto>> fetchAccountTransactions(@PathVariable Long accountId) {
+        List<TransactionDto> transactions = accountService.getTransactionById(accountId);
+        return ResponseEntity.ok(transactions);
     }
 }

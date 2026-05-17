@@ -1,6 +1,7 @@
 package com.springboot.bank_application.service;
 
 import com.springboot.bank_application.dto.AccountDto;
+import com.springboot.bank_application.dto.TransactionDto;
 import com.springboot.bank_application.dto.TransferFundDto;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface AccountService {
 
     //    AccountDto
     void transferFund(TransferFundDto transferFundDto);
+
+    List<TransactionDto> getTransactionById(Long accountId);
 }

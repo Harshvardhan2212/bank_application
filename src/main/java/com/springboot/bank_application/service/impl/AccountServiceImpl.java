@@ -1,12 +1,14 @@
 package com.springboot.bank_application.service.impl;
 
 import com.springboot.bank_application.dto.AccountDto;
+import com.springboot.bank_application.dto.TransactionDto;
 import com.springboot.bank_application.dto.TransferFundDto;
 import com.springboot.bank_application.entity.Account;
 import com.springboot.bank_application.entity.Transaction;
 import com.springboot.bank_application.exception.LowBalanceException;
 import com.springboot.bank_application.exception.ResourceNotFoundException;
 import com.springboot.bank_application.mapper.AccountMapper;
+import com.springboot.bank_application.mapper.TransactionMapper;
 import com.springboot.bank_application.repository.AccountRepository;
 import com.springboot.bank_application.repository.TransactionRepository;
 import com.springboot.bank_application.service.AccountService;
@@ -24,6 +26,8 @@ public class AccountServiceImpl implements AccountService {
 
     private final TransactionRepository transactionRepository;
 
+    private final TransactionMapper transactionMapper;
+
     private static final String TRANSACTION_TYPE_DEPOSIT = "DEPOSIT";
 
     private static final String TRANSACTION_TYPE_WITHDRAW = "WITHDRAW";
@@ -31,10 +35,11 @@ public class AccountServiceImpl implements AccountService {
     private static final String TRANSACTION_TYPE_TRANSFER = "TRANSFER";
 
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository, AccountMapper accountMapper,TransactionRepository transactionRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, AccountMapper accountMapper,TransactionRepository transactionRepository,TransactionMapper transactionMapper) {
         this.accountRepository = accountRepository;
         this.accountMapper = accountMapper;
         this.transactionRepository = transactionRepository;
+        this.transactionMapper = transactionMapper;
     }
 
 
@@ -137,7 +142,12 @@ public class AccountServiceImpl implements AccountService {
         Transaction transaction = new Transaction();
         transaction.setAccountId(transferFundDto.toAccountId());
         transaction.setAmount(transferFundDto.amount());
-        transaction.setTransactionType(TRANSACTION_TYPE_DEPOSIT);
+        transaction.setTransactionType(TRANSACTION_TYPE_TRANSFER);
         transactionRepository.save(transaction);
+    }
+
+    public List<TransactionDto> getTransactionById(Long accountId) {
+         List<Transaction> transactions =  transactionRepository.findByAccountIdOrderByTimestampDesc(accountId);
+        return transactions.stream().map(transactionMapper::toDto).toList();
     }
 }
